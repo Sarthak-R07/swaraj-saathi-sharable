@@ -1,0 +1,111 @@
+{
+  "description": "Sample government welfare schemes for Swaraj Saathi demo. This data represents the structure stored in PostgreSQL after web scraping from government portals.",
+  "schemes": [
+    {
+      "id": 1,
+      "name": "प्रधानमंत्री किसान सम्मान निधि (PM-KISAN)",
+      "name_en": "PM Kisan Samman Nidhi",
+      "category": "Agriculture",
+      "description": "Direct income support of ₹6,000/year to small and marginal farmer families, paid in three equal installments of ₹2,000 every four months.",
+      "eligibility": {
+        "occupation": ["farmer"],
+        "land_holding_max_hectares": 2,
+        "income_max": null,
+        "age_min": 18,
+        "gender": "any",
+        "caste_category": "any",
+        "residence": "rural"
+      },
+      "benefits": "₹6,000 per year (₹2,000 × 3 installments)",
+      "documents_required": ["Aadhaar Card", "Land Records", "Bank Account (linked to Aadhaar)"],
+      "portal_url": "https://pmkisan.gov.in",
+      "state": "All India",
+      "status": "active"
+    },
+    {
+      "id": 2,
+      "name": "महात्मा ज्योतिराव फुले जन आरोग्य योजना (MJPJAY)",
+      "name_en": "Mahatma Jyotirao Phule Jan Arogya Yojana",
+      "category": "Healthcare",
+      "description": "Free medical treatment up to ₹1.5 lakh per family per year at empaneled hospitals in Maharashtra for BPL and APL families.",
+      "eligibility": {
+        "occupation": "any",
+        "income_max": 100000,
+        "age_min": 0,
+        "gender": "any",
+        "caste_category": "any",
+        "residence": "any",
+        "state": "Maharashtra"
+      },
+      "benefits": "Free treatment up to ₹1,50,000/year covering 1,100+ surgeries",
+      "documents_required": ["Yellow/Orange Ration Card", "Aadhaar Card", "Income Certificate"],
+      "portal_url": "https://www.jeevandayee.gov.in",
+      "state": "Maharashtra",
+      "status": "active"
+    },
+    {
+      "id": 3,
+      "name": "लेक लाडकी योजना",
+      "name_en": "Lek Ladki Yojana",
+      "category": "Women & Child",
+      "description": "Financial assistance for girl children from economically weaker families in Maharashtra. ₹5,000 at birth to ₹1,01,000 at age 18.",
+      "eligibility": {
+        "occupation": "any",
+        "income_max": 100000,
+        "age_min": 0,
+        "age_max": 18,
+        "gender": "female",
+        "caste_category": "any",
+        "residence": "any",
+        "state": "Maharashtra"
+      },
+      "benefits": "₹5,000 (birth) → ₹6,000 (Class 1) → ₹8,000 (Class 6) → ₹1,01,000 (age 18)",
+      "documents_required": ["Birth Certificate", "Aadhaar Card (mother)", "Yellow/Orange Ration Card", "Bank Account"],
+      "portal_url": "https://womenchild.maharashtra.gov.in",
+      "state": "Maharashtra",
+      "status": "active"
+    },
+    {
+      "id": 4,
+      "name": "अण्णासाहेब पाटील आर्थिक मागास विकास महामंडळ कर्ज योजना",
+      "name_en": "Annasaheb Patil Arthik Magas Vikas Mahamandal Loan Scheme",
+      "category": "Employment & Business",
+      "description": "Interest-free loans up to ₹10 lakh for economically backward youth in Maharashtra to start their own business.",
+      "eligibility": {
+        "occupation": ["unemployed", "self-employed"],
+        "income_max": 800000,
+        "age_min": 18,
+        "age_max": 45,
+        "gender": "any",
+        "caste_category": ["OBC", "Open"],
+        "residence": "any",
+        "state": "Maharashtra"
+      },
+      "benefits": "Interest subsidy on business loans up to ₹10,00,000",
+      "documents_required": ["Aadhaar Card", "Domicile Certificate", "Income Certificate", "Business Plan", "Bank Account"],
+      "portal_url": "https://mahadbt.maharashtra.gov.in",
+      "state": "Maharashtra",
+      "status": "active"
+    },
+    {
+      "id": 5,
+      "name": "प्रधानमंत्री आवास योजना (PMAY-G)",
+      "name_en": "Pradhan Mantri Awaas Yojana - Gramin",
+      "category": "Housing",
+      "description": "Financial assistance of ₹1.20 lakh (plains) / ₹1.30 lakh (hilly areas) for construction of pucca house for BPL rural families.",
+      "eligibility": {
+        "occupation": "any",
+        "income_max": 300000,
+        "age_min": 18,
+        "gender": "any",
+        "caste_category": ["SC", "ST", "OBC", "General (BPL)"],
+        "residence": "rural"
+      },
+      "benefits": "₹1,20,000 - ₹1,30,000 housing assistance + 90 days MGNREGA wages",
+      "documents_required": ["Aadhaar Card", "BPL Certificate", "Land Ownership Proof", "Bank Account"],
+      "portal_url": "https://pmayg.nic.in",
+      "state": "All India",
+      "status": "active"
+    }
+  ]
+}
