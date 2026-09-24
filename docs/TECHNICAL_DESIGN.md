@@ -1,246 +1,108 @@
 # 📐 Swaraj Saathi — Technical Design Document
 
-> Version 1.0 | Smart India Hackathon Submission
+> Made for Viksit Bharat 🇮🇳 by Sarthak Rodge
 
 ---
 
 ## 1. Problem Statement
 
-Over **60% of rural Indians** are eligible for government welfare schemes but fail to access them due to:
-- Fragmented scheme data across 100+ government portals
-- Complex form-based application processes requiring digital literacy
-- Language barriers (most portals are English-only)
-- No unified grievance tracking mechanism
+Over **60% of rural Indians** are eligible for government welfare schemes but fail to access them due to fragmented data across 100+ portals, complex form-based processes, and language barriers.
 
-**Swaraj Saathi** solves this by replacing static web forms with an **Agentic AI conversational interface** that autonomously guides citizens in their native language.
+**Swaraj Saathi** replaces static web forms with an **Agentic AI conversational interface** that autonomously guides citizens in their native language.
 
 ---
 
 ## 2. System Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                        CITIZEN'S PHONE                          │
-│                   React Native (Expo) App                       │
-│     ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐    │
-│     │ Sahayak  │  │  Magic   │  │ Rakshak  │  │  Scheme  │    │
-│     │  (Chat)  │  │Auto-Match│  │(Grievance)│  │ Browser  │    │
-│     └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘    │
-└──────────┼──────────────┼────────────┼──────────────┼──────────┘
-           │              │            │              │
-           ▼              ▼            ▼              ▼
-    ┌──────────────────────────────────────────────────────┐
-    │              REST API (HTTPS / JSON)                  │
-    └──────────────────────┬───────────────────────────────┘
-                           │
-    ┌──────────────────────▼───────────────────────────────┐
-    │               DOCKER INFRASTRUCTURE                   │
-    │                                                       │
-    │  ┌─────────────────────────────────────────────┐     │
-    │  │         FastAPI Backend (Python)             │     │
-    │  │                                             │     │
-    │  │  ┌───────────┐  ┌──────────────────────┐   │     │
-    │  │  │ Intent    │  │  Agentic State       │   │     │
-    │  │  │ Classifier│──│  Machine (Orchestr.) │   │     │
-    │  │  └───────────┘  └──────────┬───────────┘   │     │
-    │  │                            │               │     │
-    │  │  ┌───────────┐  ┌─────────▼───────────┐   │     │
-    │  │  │ Scheme    │  │  Portal Adapters     │   │     │
-    │  │  │ Matcher   │  │  (Form Templates)    │   │     │
-    │  │  └───────────┘  └─────────────────────┘   │     │
-    │  └─────────────────────┬───────────────────────┘     │
-    │                        │                              │
-    │  ┌─────────┐  ┌───────▼───────┐  ┌──────────────┐  │
-    │  │ Redis   │  │ Local SLM     │  │ PostgreSQL   │  │
-    │  │ (Cache) │  │ (Ollama /     │  │ (Schemes,    │  │
-    │  │         │  │  Sarvam AI)   │  │  Grievances) │  │
-    │  └─────────┘  └───────────────┘  └──────────────┘  │
-    │                                                       │
-    └───────────────────────────────────────────────────────┘
-
-    ┌───────────────────────────────────────────────────────┐
-    │            DATA INGESTION LAYER                       │
-    │  Python Web Scrapers → Government Portal Data         │
-    │  (Scheduled via CRON: daily at 2 AM)                  │
-    └───────────────────────────────────────────────────────┘
+  ┌────────────────────┐
+  │   Citizen's Phone  │
+  │  (React Native App)│
+  └────────┬───────────┘
+           │ REST API
+  ┌────────▼───────────────────────────────┐
+  │        DOCKER INFRASTRUCTURE            │
+  │                                         │
+  │  ┌──────────────────────────────────┐  │
+  │  │     FastAPI Backend + Agentic    │  │
+  │  │        AI Orchestrator           │  │
+  │  └──────┬──────────┬───────────┬────┘  │
+  │         │          │           │        │
+  │    ┌────▼───┐ ┌────▼────┐ ┌───▼─────┐ │
+  │    │ Redis  │ │Local SLM│ │PostgreSQL│ │
+  │    │(Cache) │ │(Ollama/ │ │ (Data)   │ │
+  │    │        │ │Sarvam)  │ │          │ │
+  │    └────────┘ └─────────┘ └──────────┘ │
+  │                                         │
+  │  ┌──────────────────────────────────┐  │
+  │  │   Automated Data Scrapers       │  │
+  │  │   (Government Portal Ingestion) │  │
+  │  └──────────────────────────────────┘  │
+  └─────────────────────────────────────────┘
 ```
 
 ---
 
-## 3. Component Deep-Dive
+## 3. Key Components
 
-### 3.1 Frontend — React Native (Expo)
-
-| Screen | Purpose |
-|--------|---------|
-| **Sahayak (AI Chat)** | Conversational AI assistant with Agentic form-filling |
-| **Magic Auto-Match** | Interview-based scheme eligibility engine |
-| **Rakshak (Grievance)** | Visual grievance filing with photo upload & OCR |
-| **Scheme Browser** | Searchable, categorized scheme catalog |
-| **DigiLocker** | Secure document storage for citizens |
-
-**Key Design Decisions:**
-- Expo for cross-platform (Android + iOS) from single codebase
-- NativeWind (Tailwind CSS) for responsive styling
-- Multilingual support (English ↔ Marathi) via `LanguageContext`
+| Component | Technology | Role |
+|-----------|-----------|------|
+| **Frontend** | React Native (Expo) | Multilingual mobile app |
+| **Backend** | Python FastAPI | Agentic orchestration engine |
+| **AI Engine** | Sarvam AI + Ollama | Privacy-first local inference |
+| **Database** | PostgreSQL 16 | Scheme & grievance storage |
+| **Cache** | Redis 7 | Session memory |
+| **Data Pipeline** | Python Scrapers (CRON) | Automated scheme ingestion |
+| **Infrastructure** | Docker Compose | One-command deployment |
 
 ---
 
-### 3.2 Backend — FastAPI (Python)
+## 4. Core Innovation — Agentic AI (Proprietary)
 
-The backend is not a simple CRUD API. It is an **Agentic Orchestrator** — an AI system that autonomously manages multi-step citizen interactions.
+Unlike traditional chatbots that only answer questions, Swaraj Saathi uses a **proprietary Agentic State Machine** that:
 
-#### The Agentic Chat Pipeline
+- **Autonomously detects** citizen intent from natural language (Hindi / Marathi / English)
+- **Guides step-by-step** through complex government processes without any web forms
+- **Executes tasks** (file grievances, apply for schemes) and delivers a confirmation receipt — all within the chat
 
-```
-User Message → Intent Classifier → Router
-                                      │
-                    ┌─────────────────┼─────────────────┐
-                    ▼                 ▼                  ▼
-              TASK Intent       QUESTION Intent     PROFILE Intent
-              (Grievance,       (Scheme info,       (Age, income,
-               Apply, etc.)      eligibility)        location)
-                    │                 │                  │
-                    ▼                 ▼                  ▼
-            State Machine       PostgreSQL           Redis Cache
-            (Collect fields     Keyword Search       (Update user
-             step-by-step)      + AI Response         profile)
-                    │
-                    ▼
-            Portal Adapter
-            (Execute task,
-             return receipt)
-```
-
-**How the Agentic State Machine works:**
-
-1. **IDLE** → User says "मुझे शिकायत दर्ज करनी है" (I want to file a complaint)
-2. **INTENT DETECTED** → Classifier identifies `TASK: grievance_file`
-3. **COLLECTING (Step 1/4)** → AI asks: "Which district?" 
-4. **COLLECTING (Step 2/4)** → AI asks: "Which department?"
-5. **COLLECTING (Step 3/4)** → AI asks: "Describe your issue"
-6. **COLLECTING (Step 4/4)** → AI asks: "Your phone number?"
-7. **EXECUTING** → Portal Adapter submits the grievance
-8. **COMPLETED** → Receipt Card shown: `Ticket #GRV-2026-XXXX | Status: Registered`
+> *Implementation details of the state machine, intent classification pipeline, and portal adapter architecture are proprietary.*
 
 ---
 
-### 3.3 AI Engine — Local SLM (Privacy-First)
+## 5. Privacy-by-Design
 
-| Feature | Implementation |
-|---------|---------------|
-| **Model** | Sarvam AI / Qwen 2.5 (run locally via Ollama) |
-| **Hosting** | Self-hosted — NO data leaves the server |
-| **Language Support** | Hindi, Marathi, English (native Indic understanding) |
-| **Tasks** | Intent classification, field extraction, response generation |
-| **Privacy** | 100% data localization — compliant with government data policies |
-
-**Why Sarvam AI?**
-- Built in India, optimized for 10+ Indian languages
-- Superior accuracy on Indic dialects vs generic models (GPT, LLaMA)
-- Lightweight enough to run on-premise without GPU clusters
-
-**Why Local (Ollama)?**
-- Government citizen data (Aadhaar, income, caste) must NEVER leave sovereign servers
-- Zero dependency on third-party cloud APIs (OpenAI, Google, etc.)
-- Works offline in areas with limited internet
-
----
-
-### 3.4 Data Ingestion — Automated Web Scrapers
-
-```
-Government Portals          Python Scrapers          PostgreSQL
-┌──────────────┐           ┌──────────────┐        ┌──────────────┐
-│ mahadbt.gov  │──scrape──▶│  Crawler     │──save──▶│ schemes      │
-│ pmjay.gov    │           │  Engine      │        │ (name, desc, │
-│ maha.gov     │           │  (Scheduled) │        │  eligibility,│
-│ india.gov    │           └──────────────┘        │  documents)  │
-└──────────────┘             runs daily            └──────────────┘
-```
-
-- Scrapers run on a **CRON schedule** (daily at 2 AM)
-- Data is cleaned, deduplicated, and stored in PostgreSQL
-- Ensures the scheme database is always up-to-date without manual entry
-
----
-
-### 3.5 Infrastructure — Docker Compose
-
-All services are containerized for **one-command deployment**:
-
-| Container | Image | Port | Purpose |
-|-----------|-------|------|---------|
-| `swaraj_backend` | Custom (FastAPI) | 8000 | API server |
-| `swaraj_postgres` | postgres:16-alpine | 5432 | Persistent storage |
-| `swaraj_redis` | redis:7-alpine | 6379 | Session cache |
-| `swaraj_ollama` | ollama/ollama | 11434 | Local AI inference |
-
-**Deployment:** `docker-compose up -d` starts the entire platform.
-
----
-
-## 4. Data Flow Diagram
-
-```
-┌──────────┐    ┌──────────┐    ┌──────────┐    ┌──────────┐
-│  Citizen  │───▶│ Frontend │───▶│ Backend  │───▶│  Local   │
-│  (Phone)  │◀───│  (Expo)  │◀───│ (FastAPI)│◀───│   SLM    │
-└──────────┘    └──────────┘    └────┬─────┘    └──────────┘
-                                     │
-                              ┌──────┴──────┐
-                              │             │
-                         ┌────▼───┐   ┌─────▼────┐
-                         │ Redis  │   │PostgreSQL │
-                         │(Cache) │   │ (Data)    │
-                         └────────┘   └──────────┘
-```
-
-**Request Lifecycle:**
-1. Citizen types/speaks in Marathi on their phone
-2. Frontend sends message to FastAPI backend via REST
-3. Backend checks Redis for existing session context
-4. Backend sends prompt to Local SLM for intent classification
-5. If TASK → Agentic State Machine collects fields step-by-step
-6. If QUESTION → PostgreSQL keyword search + AI-generated response
-7. Response sent back to frontend with optional agent_step metadata
-8. Frontend renders chat bubble (+ progress badge / receipt card if applicable)
-
----
-
-## 5. Security & Privacy Architecture
-
-| Concern | Solution |
+| Concern | Approach |
 |---------|----------|
-| **Data Localization** | All AI inference runs locally (Ollama). Zero external API calls. |
-| **Citizen PII** | Stored only in PostgreSQL behind Docker network isolation. |
-| **API Security** | CORS whitelisting, session-based auth, rate limiting. |
-| **Credentials** | Environment variables only — never hardcoded. `.env` in `.gitignore`. |
-| **Network** | Docker bridge network — services not exposed beyond required ports. |
+| **Data Localization** | All AI runs locally via Ollama — zero external API calls |
+| **Citizen PII** | Stored in isolated Docker network, never leaves the server |
+| **Credentials** | Environment variables only, `.env` in `.gitignore` |
+
+**Why Sarvam AI?** Built in India, optimized for Indic languages, lightweight enough for on-premise deployment without GPU clusters.
 
 ---
 
-## 6. Scalability Path
+## 6. Deployment
 
-| Stage | Infrastructure | Capacity |
-|-------|---------------|----------|
-| **Hackathon Demo** | Single laptop (Docker) | ~50 concurrent users |
-| **Pilot (1 District)** | 2-core VM + GPU | ~1,000 users |
-| **State Rollout** | Kubernetes cluster + vLLM | ~100,000+ users |
-| **National** | Multi-region K8s + load balancer | Millions |
+The entire platform — database, cache, AI model, and API — is fully containerized. A single `docker-compose up -d` deploys everything.
 
-The Docker-first architecture ensures the same code runs identically from a laptop to a government data center.
-
----
-
-## 7. Innovation Highlights
-
-1. **Agentic AI (not a chatbot):** The system autonomously identifies missing information and guides the user — no static forms.
-2. **Privacy-by-Design:** Indigenous SLM (Sarvam AI) runs on-premise; citizen data never touches third-party clouds.
-3. **Zero Digital Literacy Required:** Citizens just text/talk naturally in their language. The AI handles the rest.
-4. **Automated Data Pipeline:** Web scrapers keep the scheme database current without manual government intervention.
-5. **One-Command Deployment:** `docker-compose up -d` deploys the entire platform — database, cache, AI, and API.
+| Container | Purpose |
+|-----------|---------|
+| `swaraj_backend` | API + Agentic Engine |
+| `swaraj_postgres` | Persistent storage |
+| `swaraj_redis` | Session cache |
+| `swaraj_ollama` | Local AI inference |
 
 ---
 
-*Document prepared for Smart India Hackathon evaluation.*
+## 7. Scalability Path
+
+| Stage | Infrastructure |
+|-------|---------------|
+| Demo | Single laptop (Docker) |
+| Pilot (1 District) | 2-core VM + GPU |
+| State Rollout | Kubernetes + vLLM |
+| National | Multi-region K8s |
+
+---
+
+*Proprietary implementation details are classified. This document provides an architectural overview for evaluation purposes only.*

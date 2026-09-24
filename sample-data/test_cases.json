@@ -1,167 +1,51 @@
 {
-  "description": "Test cases for Swaraj Saathi Agentic Chat Pipeline and Scheme Matching Engine",
+  "description": "Functional test cases for Swaraj Saathi — validates core user flows without exposing internal architecture",
   "test_cases": [
     {
       "id": "TC-001",
-      "category": "Agentic Chat — Grievance Filing",
-      "description": "User requests to file a water supply complaint in Hindi",
-      "input": {
-        "message": "मुझे शिकायत दर्ज करनी है",
-        "language": "hi"
-      },
-      "expected_behavior": {
-        "intent_detected": "TASK",
-        "task_type": "grievance_file",
-        "state": "COLLECTING",
-        "step": "1/4",
-        "ai_asks": "Which district/location is this complaint about?"
-      }
+      "category": "Conversational Grievance Filing",
+      "description": "User files a water supply complaint entirely through chat (Hindi)",
+      "input": "मुझे शिकायत दर्ज करनी है",
+      "expected": "AI guides the user step-by-step and returns a confirmation receipt with ticket ID"
     },
     {
       "id": "TC-002",
-      "category": "Agentic Chat — Grievance Filing (Marathi)",
-      "description": "User requests to file a complaint in Marathi",
-      "input": {
-        "message": "मला तक्रार नोंदवायची आहे",
-        "language": "mr"
-      },
-      "expected_behavior": {
-        "intent_detected": "TASK",
-        "task_type": "grievance_file",
-        "state": "COLLECTING",
-        "step": "1/4"
-      }
+      "category": "Conversational Grievance Filing (Marathi)",
+      "description": "User files a complaint in Marathi",
+      "input": "मला तक्रार नोंदवायची आहे",
+      "expected": "AI guides the user step-by-step in Marathi and returns a confirmation receipt"
     },
     {
       "id": "TC-003",
-      "category": "Agentic Chat — Complete Flow",
-      "description": "Multi-turn grievance filing to completion",
-      "conversation": [
-        { "role": "user", "content": "I want to file a complaint" },
-        { "role": "bot", "content": "I can help! Which district?", "agent_step": { "state": "COLLECTING", "step": "1/4" } },
-        { "role": "user", "content": "Pune" },
-        { "role": "bot", "content": "Which department?", "agent_step": { "state": "COLLECTING", "step": "2/4" } },
-        { "role": "user", "content": "Water supply" },
-        { "role": "bot", "content": "Please describe the issue", "agent_step": { "state": "COLLECTING", "step": "3/4" } },
-        { "role": "user", "content": "No water for 3 days" },
-        { "role": "bot", "content": "Your complaint has been registered!", "agent_step": { "state": "COMPLETED", "receipt": { "ticket_code": "GRV-2026-XXXX", "status": "Registered" } } }
-      ],
-      "expected_behavior": {
-        "final_state": "COMPLETED",
-        "receipt_generated": true
-      }
+      "category": "Scheme Discovery",
+      "description": "Rural female farmer asks for relevant schemes",
+      "input": "मी एक शेतकरी आहे, मला कोणत्या योजना मिळतील?",
+      "expected": "AI recommends matching schemes (PM-KISAN, Lek Ladki, MJPJAY) based on profile"
     },
     {
       "id": "TC-004",
-      "category": "Scheme Matching — Profile-Based",
-      "description": "Young female farmer in rural Maharashtra should match agricultural and women-specific schemes",
-      "input": {
-        "profile": {
-          "age": 25,
-          "gender": "female",
-          "occupation": "farmer",
-          "income": 80000,
-          "caste_category": "OBC",
-          "residence": "rural",
-          "state": "Maharashtra"
-        }
-      },
-      "expected_matched_schemes": [
-        "PM-KISAN",
-        "Lek Ladki Yojana",
-        "MJPJAY",
-        "PMAY-G"
-      ]
+      "category": "Profile-Based Matching",
+      "description": "SC category student in urban Maharashtra",
+      "profile": { "age": 20, "gender": "male", "occupation": "student", "caste": "SC" },
+      "expected": "Matches scholarship schemes like Dr. Ambedkar Swadhar Yojana"
     },
     {
       "id": "TC-005",
-      "category": "Scheme Matching — Urban Student",
-      "description": "SC category male student in urban area",
-      "input": {
-        "profile": {
-          "age": 20,
-          "gender": "male",
-          "occupation": "student",
-          "income": 150000,
-          "caste_category": "SC",
-          "residence": "urban",
-          "state": "Maharashtra"
-        }
-      },
-      "expected_matched_schemes": [
-        "Dr. Ambedkar Swadhar Yojana",
-        "Post-Matric Scholarship for SC"
-      ]
+      "category": "Multilingual Support",
+      "description": "System handles English, Hindi, and Marathi inputs correctly",
+      "inputs": [
+        "I want to apply for a housing scheme",
+        "मुझे आवास योजना के लिए अप्लाई करना है",
+        "मला घरकुल योजनेसाठी अर्ज करायचा आहे"
+      ],
+      "expected": "All three inputs are understood and routed to the same scheme application flow"
     },
     {
       "id": "TC-006",
-      "category": "Intent Classification",
-      "description": "Various user inputs and their expected intent classification",
-      "test_inputs": [
-        { "input": "मुझे शिकायत दर्ज करनी है", "expected_intent": "TASK", "expected_task": "grievance_file" },
-        { "input": "मेरी शिकायत का status क्या है", "expected_intent": "TASK", "expected_task": "grievance_track" },
-        { "input": "PM Kisan योजना के लिए apply करना है", "expected_intent": "TASK", "expected_task": "scheme_apply" },
-        { "input": "मी एक शेतकरी आहे, मला कोणत्या योजना मिळतील?", "expected_intent": "QUESTION" },
-        { "input": "मेरी उम्र 25 साल है और मैं किसान हूं", "expected_intent": "PROFILE" },
-        { "input": "What documents do I need for PMAY?", "expected_intent": "QUESTION" }
-      ]
-    },
-    {
-      "id": "TC-007",
-      "category": "API Health Check",
-      "description": "Backend health endpoint returns expected response",
-      "request": {
-        "method": "GET",
-        "url": "/api/v1/health"
-      },
-      "expected_response": {
-        "status_code": 200,
-        "body": {
-          "status": "healthy",
-          "version": "0.1.0"
-        }
-      }
-    },
-    {
-      "id": "TC-008",
-      "category": "API Chat Endpoint",
-      "description": "Chat endpoint accepts messages and returns response with session context",
-      "request": {
-        "method": "POST",
-        "url": "/api/v1/chat",
-        "body": {
-          "messages": [{ "role": "user", "content": "Hello" }],
-          "session_id": "test_session_001"
-        }
-      },
-      "expected_response": {
-        "status_code": 200,
-        "body_contains": ["message", "session_id"]
-      }
-    },
-    {
-      "id": "TC-009",
-      "category": "Privacy — Data Localization",
-      "description": "Verify no external API calls are made during chat inference",
-      "validation": "Monitor network traffic during chat. All LLM calls must go to localhost:11434 (Ollama). Zero outbound calls to openai.com, api.anthropic.com, or any third-party LLM provider.",
-      "expected_result": "PASS — all inference local"
-    },
-    {
-      "id": "TC-010",
-      "category": "Edge Case — Empty Message",
-      "description": "Backend handles empty or missing user message gracefully",
-      "request": {
-        "method": "POST",
-        "url": "/api/v1/chat",
-        "body": {
-          "messages": [],
-          "session_id": "test_session_edge"
-        }
-      },
-      "expected_response": {
-        "status_code": 200,
-        "error_handled": true
-      }
+      "category": "Privacy Validation",
+      "description": "No citizen data leaves the local server during AI inference",
+      "validation": "Network traffic monitoring confirms zero outbound calls to third-party LLM providers",
+      "expected": "PASS — all inference local"
     }
   ]
 }

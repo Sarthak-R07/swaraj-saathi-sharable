@@ -1,6 +1,6 @@
 # 🇮🇳 Swaraj Saathi — Voice-Native AI Platform for Rural Welfare Discovery
 
-> **Smart India Hackathon (SIH) Submission**
+> **Made for Viksit Bharat 🇮🇳 by Sarthak Rodge**
 
 Swaraj Saathi is an **Agentic AI-powered mobile platform** that helps rural Indian citizens discover, understand, and apply for government welfare schemes through a simple, conversational chat interface — in their own language.
 
@@ -150,9 +150,9 @@ swaraj-saathi/
 
 ---
 
-## 👥 Team
+## 👤 Author
 
-Built with ❤️ for **Smart India Hackathon** by the Swaraj Saathi Team.
+Made with ❤️ for **Viksit Bharat** 🇮🇳 by **Sarthak Rodge**.
 
 ---
 
