@@ -1,108 +1,61 @@
-# 📐 Swaraj Saathi — Technical Design Document
+# 📐 Swaraj Saathi — Technical Overview
 
 > Made for Viksit Bharat 🇮🇳 by Sarthak Rodge
 
 ---
 
-## 1. Problem Statement
+## Problem Statement
 
-Over **60% of rural Indians** are eligible for government welfare schemes but fail to access them due to fragmented data across 100+ portals, complex form-based processes, and language barriers.
+Over **60% of rural Indians** are eligible for government welfare schemes but fail to access them due to fragmented data, complex portals, and language barriers.
 
-**Swaraj Saathi** replaces static web forms with an **Agentic AI conversational interface** that autonomously guides citizens in their native language.
-
----
-
-## 2. System Architecture Overview
-
-```
-  ┌────────────────────┐
-  │   Citizen's Phone  │
-  │  (React Native App)│
-  └────────┬───────────┘
-           │ REST API
-  ┌────────▼───────────────────────────────┐
-  │        DOCKER INFRASTRUCTURE            │
-  │                                         │
-  │  ┌──────────────────────────────────┐  │
-  │  │     FastAPI Backend + Agentic    │  │
-  │  │        AI Orchestrator           │  │
-  │  └──────┬──────────┬───────────┬────┘  │
-  │         │          │           │        │
-  │    ┌────▼───┐ ┌────▼────┐ ┌───▼─────┐ │
-  │    │ Redis  │ │Local SLM│ │PostgreSQL│ │
-  │    │(Cache) │ │(Ollama/ │ │ (Data)   │ │
-  │    │        │ │Sarvam)  │ │          │ │
-  │    └────────┘ └─────────┘ └──────────┘ │
-  │                                         │
-  │  ┌──────────────────────────────────┐  │
-  │  │   Automated Data Scrapers       │  │
-  │  │   (Government Portal Ingestion) │  │
-  │  └──────────────────────────────────┘  │
-  └─────────────────────────────────────────┘
-```
+**Swaraj Saathi** eliminates these barriers with an AI-powered conversational platform that works in the citizen's native language.
 
 ---
 
-## 3. Key Components
+## What Makes It Different
 
-| Component | Technology | Role |
-|-----------|-----------|------|
-| **Frontend** | React Native (Expo) | Multilingual mobile app |
-| **Backend** | Python FastAPI | Agentic orchestration engine |
-| **AI Engine** | Sarvam AI + Ollama | Privacy-first local inference |
-| **Database** | PostgreSQL 16 | Scheme & grievance storage |
-| **Cache** | Redis 7 | Session memory |
-| **Data Pipeline** | Python Scrapers (CRON) | Automated scheme ingestion |
-| **Infrastructure** | Docker Compose | One-command deployment |
+| Traditional Approach | Swaraj Saathi |
+|---------------------|---------------|
+| Static web forms on multiple portals | Single conversational interface |
+| English-only, requires digital literacy | Hindi, Marathi, English — just talk naturally |
+| Manual data entry by citizen | AI autonomously collects and processes information |
+| Cloud-based AI (data leaves India) | **Privacy-first: all AI runs locally on-premise** |
+| Manual scheme database updates | **Automated data ingestion pipeline** |
 
 ---
 
-## 4. Core Innovation — Agentic AI (Proprietary)
+## Core Innovation
 
-Unlike traditional chatbots that only answer questions, Swaraj Saathi uses a **proprietary Agentic State Machine** that:
+Swaraj Saathi uses a **proprietary Agentic AI engine** — unlike standard chatbots that only answer questions, our system can **autonomously execute multi-step government processes** (grievance filing, scheme applications, status tracking) entirely through natural conversation.
 
-- **Autonomously detects** citizen intent from natural language (Hindi / Marathi / English)
-- **Guides step-by-step** through complex government processes without any web forms
-- **Executes tasks** (file grievances, apply for schemes) and delivers a confirmation receipt — all within the chat
+The citizen never fills a form. The AI handles everything.
 
-> *Implementation details of the state machine, intent classification pipeline, and portal adapter architecture are proprietary.*
+> *Architecture and implementation details are proprietary and not disclosed in this document.*
 
 ---
 
-## 5. Privacy-by-Design
+## Privacy & Security
 
-| Concern | Approach |
-|---------|----------|
-| **Data Localization** | All AI runs locally via Ollama — zero external API calls |
-| **Citizen PII** | Stored in isolated Docker network, never leaves the server |
-| **Credentials** | Environment variables only, `.env` in `.gitignore` |
-
-**Why Sarvam AI?** Built in India, optimized for Indic languages, lightweight enough for on-premise deployment without GPU clusters.
+- **100% Data Localization** — AI inference runs entirely on-premise using indigenous Indian language models
+- **Zero third-party cloud dependency** — citizen data never leaves the server
+- **Containerized deployment** — one-command setup for any government data center
 
 ---
 
-## 6. Deployment
+## Scalability
 
-The entire platform — database, cache, AI model, and API — is fully containerized. A single `docker-compose up -d` deploys everything.
-
-| Container | Purpose |
-|-----------|---------|
-| `swaraj_backend` | API + Agentic Engine |
-| `swaraj_postgres` | Persistent storage |
-| `swaraj_redis` | Session cache |
-| `swaraj_ollama` | Local AI inference |
+Designed to scale from a single laptop demo to a national-level deployment without any code changes.
 
 ---
 
-## 7. Scalability Path
+## Tech Highlights
 
-| Stage | Infrastructure |
-|-------|---------------|
-| Demo | Single laptop (Docker) |
-| Pilot (1 District) | 2-core VM + GPU |
-| State Rollout | Kubernetes + vLLM |
-| National | Multi-region K8s |
+- Mobile-first (cross-platform)
+- Multilingual AI (Indic language optimized)
+- Automated government data pipeline
+- Containerized infrastructure
+- Privacy-by-design architecture
 
 ---
 
-*Proprietary implementation details are classified. This document provides an architectural overview for evaluation purposes only.*
+*This document is an overview for evaluation purposes. Implementation details are classified.*
